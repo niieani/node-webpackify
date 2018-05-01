@@ -1,27 +1,27 @@
-# webpackify-node
+# node-webpackify
 
 Redirects all your Node `require()` calls to Webpack's module compiler,
 making it into a JIT (just-in-time) compiler.
 
 It can serve as a replacement for `babel-register` or `ts-node`.
 
-Based on the provided `webpack` config, `webpackify-node` will use:
+Based on the provided `webpack` config, `node-webpackify` will use:
 - `webpack`'s resolvers (including resolving of aliases, resolve plugins, etc.)
 - `webpack`'s rules (loaders)
 
 But NOT webpack's plugins (or at least that remains untested)!
-The reason is that `webpackify-node` will only run a handful of hooks required to setup the resolvers and loaders.
+The reason is that `node-webpackify` will only run a handful of hooks required to setup the resolvers and loaders.
 
 Yes, this means you can use things like `css-loader` with Node or Electron.
 Think: ditching `karma-webpack` in place of `electron-mocha` for much faster testing.
 
 ## Usage
 
-`webpackify-node` exposes a `register` function, which you can use as follows:
+`node-webpackify` exposes a `register` function, which you can use as follows:
 
 ```js
 const webpackOptions = require('./webpack.config.js')
-require('webpackify-node')(
+require('node-webpackify')(
   webpackOptions,
   // (optional) RegExp to skip the file based on the parent's module path
   originBlacklist,
@@ -44,7 +44,7 @@ node -r ./register-webpack src/entry
 
 ## Performance
 
-Since loaders can be slow, and `require`'s are synchronous, a lot could still be done to make `webpackify-node` faster:
+Since loaders can be slow, and `require`'s are synchronous, a lot could still be done to make `node-webpackify` faster:
 - long-term caching based on file timestamps (like `babel-register`)
 - improving logic for early bailing
 
@@ -57,10 +57,10 @@ They will make your `require`'s evaluate at the first moment they're used, rathe
 
 ## Debugging
 
-Lunch your app with a `DEBUG=webpackify-node:*` environment variable, e.g.:
+Lunch your app with a `DEBUG=node-webpackify:*` environment variable, e.g.:
 
 ```bash
-DEBUG=webpackify-node:* node -r ./register-webpack src/entry 
+DEBUG=node-webpackify:* node -r ./register-webpack src/entry 
 ```
 
 ## Using the compiler directly
