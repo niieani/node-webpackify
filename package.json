@@ -10,6 +10,11 @@
     "compiler",
     "webpack"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niieani/node-webpackify.git"
+  },
+  "homepage": "https://github.com/niieani/node-webpackify#readme",
   "author": "Bazyli Brzóska <bazyli.brzoska@gmail.com>",
   "collaborators": [
     "Bazyli Brzóska <bazyli.brzoska@gmail.com>"
