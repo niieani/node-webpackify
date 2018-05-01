@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`uses a loader css-loader and style-loader 1`] = `
+"<head><meta charset=\\"utf-8\\"><style type=\\"text/css\\">body {
+    color: black;
+}
+</style></head><body></body>"
+`;
+
+exports[`uses a loader postcss-loader 1`] = `
+"<head><meta charset=\\"utf-8\\"><style type=\\"text/css\\">.hMP53iZXymzbgPMrMPcB8 {
+    color: blanchedalmond;
+    -webkit-animation: linear;
+            animation: linear;
+}
+
+body {
+    color: black;
+}
+</style></head><body></body>"
+`;
+
+exports[`uses a loader raw-loader 1`] = `"I'm a text file"`;

@@ -1,0 +1,72 @@
+{
+  "name": "node-webpackify",
+  "version": "1.0.0",
+  "description": "Utility for redirecting require() requests in Node to Webpack's module compiler",
+  "keywords": [
+    "node",
+    "babel-register",
+    "register",
+    "JIT",
+    "compiler",
+    "webpack"
+  ],
+  "author": "Bazyli Brzóska <bazyli.brzoska@gmail.com>",
+  "collaborators": [
+    "Bazyli Brzóska <bazyli.brzoska@gmail.com>"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "deasync": "0.1.12",
+    "debug": "3.1.0",
+    "tslib": "1.9.0",
+    "webpack": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/deasync": "0.1.0",
+    "@types/debug": "0.0.30",
+    "@types/execa": "0.9.0",
+    "@types/jest": "22.2.3",
+    "@types/node": "^9",
+    "@types/webpack": "4.1.4",
+    "autoprefixer": "8.4.1",
+    "css-loader": "0.28.11",
+    "execa": "0.10.0",
+    "jest": "23.0.0-beta.3r",
+    "jsdom": "11.10.0",
+    "jsdom-global": "3.0.2",
+    "postcss-import": "11.1.0",
+    "postcss-loader": "2.1.4",
+    "raw-loader": "0.5.1",
+    "style-loader": "0.21.0",
+    "ts-jest": "22.4.4",
+    "typescript": "2.8.3",
+    "webpack-command": "0.1.0"
+  },
+  "resolutions": {
+    "source-map-support": "0.5.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\/src\\/.+\\.[jt]sx?$": "ts-jest"
+    },
+    "testRegex": "\\/src\\/.*(__tests__/.*|\\.test)\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    }
+  }
+}

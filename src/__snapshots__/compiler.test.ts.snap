@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple compiler compilation async 1`] = `
+"console.log('basic')
+"
+`;
+
+exports[`simple compiler compilation sync 1`] = `
+"console.log('basic')
+"
+`;
