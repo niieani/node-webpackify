@@ -1,6 +1,6 @@
 {
   "name": "node-webpackify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utility for redirecting require() requests in Node to Webpack's module compiler",
   "keywords": [
     "node",
