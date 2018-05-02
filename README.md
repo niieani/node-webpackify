@@ -17,24 +17,28 @@ Think: ditching `karma-webpack` in place of `electron-mocha` for much faster tes
 
 ## Usage
 
-`node-webpackify` exposes a `register` function, which you can use as follows:
+`node-webpackify` exposes a `register` function, which you can use by calling it with the following arguments:
 
 ```js
 const webpackOptions = require('./webpack.config.js')
 require('node-webpackify')(
+  // webpack options object:
   webpackOptions,
-  // (optional) RegExp to skip the file based on the parent's module path
-  originBlacklist,
-  // (optional) RegExp to skip the file based on the request: require(request)
-  requestBlacklist,
-  // (optional) skip on node builtins (default = true):
-  blacklistBuiltin,
+
+  // (optional) function(request: string, parentPath: string): boolean
+  // can be used to limit which requests are run through the resolvers and loaders
+  // when left undefined, 
+  // 
+  // @param request is the string passed into: require(request)
+  // @param parentPath is the full, absolute path to the module that the request is located in
+  test,
+
   // (optional) override webpack's target (default = 'node'), useful for Electron
   target,
 )
 ```
 
-I'd recommend create a `register-webpack.js` file with similar contents to the ones above.
+I'd recommend creating a `register-webpack.js` file with similar contents to the file above.
 
 Then, you can simply run your code by executing:
 

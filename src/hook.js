@@ -17,8 +17,7 @@ const anyLogEnabled = logLoad.enabled || logResolve.enabled || logError.enabled 
 
 export function register(
   wpOptions = {},
-  originBlacklist,
-  requestBlacklist,
+  test,
   blacklistBuiltin = true,
   target = 'node',
 ) {
@@ -28,11 +27,9 @@ export function register(
     const {filename: parentFilename = ''} = parentModule || {}
 
     const shouldBail = isMain
-      || (!request.startsWith('!') && extname(request) === '.json')
-      || (blacklistBuiltin && Module.builtinModules.some((builtIn) => request.startsWith(builtIn)))
-      || (originBlacklist && parentFilename.match(originBlacklist))
-      || (requestBlacklist && request.match(requestBlacklist))
       || parentFilename === ''
+      || (blacklistBuiltin && Module.builtinModules.some((builtIn) => request.startsWith(builtIn)))
+      || (test && !test(request, parentFilename))
 
     if (!shouldBail) {
       try {

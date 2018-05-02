@@ -1,6 +1,8 @@
 import {runFixture} from '../util-tests'
 
 describe('uses a loader', () => {
+  jest.setTimeout(10000)
+
   it ('raw-loader', async () => {
     const result = await runFixture('raw')
     expect(result.failed).toBe(false)
