@@ -62,7 +62,6 @@ typings/
 # next.js build output
 .next
 
-/dist
 /.cache
 /.idea/workspace.xml
 /preset
