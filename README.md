@@ -46,18 +46,66 @@ Then, you can simply run your code by executing:
 node -r ./register-webpack src/entry 
 ```
 
+### Output code must be valid NodeJS code
+
+You need to ensure *none* of the output code contains ES6 `import`s (whether static or dynamic).
+
+If using Babel or TypeScript, ensure you set a CommonJS target for the module system.
+
+If you use dynamic `import()`s, you could add a babel plugin to transpile them into promisified `require()`s:
+- https://github.com/airbnb/babel-plugin-dynamic-import-node
+
+## Why?
+
+- NodeJS-based testing without mocking non-JS files, 
+  e.g. running `jest` or `mocha` under Electron (which is Node + Chromium):
+    - no build/rebuild step necessary
+    - native watch mode
+    - test your (post)CSS/SASS/CSSinJS *with* measuring and rendering, but *without* bundling
+- one config to rule them all: why should you need a different config for your testing platform,
+and a different one for your production?
+- run a Node REPL that uses your webpack configuration (resolvers, loaders, aliases),
+and behaves like webpack (supporting inline syntax like `require('!graphql-loader!./schema.graphql')`)
+- debug your `serverless` functions without `serverless-webpack`: no bundles, no sourcemap mess, no rebuilding!
+- things I didn't even think of 😄.
+- [Edit this README](https://github.com/niieani/node-webpackify/edit/master/README.md) if you have an interesting use-case!
+
+## ES6 modules support
+
+`node-webpackify` does not add hooks to the ES6 modules system when the `--experimentalModules` flag is enabled.
+
+It shouldn't be too hard to add, as there are official APIs for hooking into that system.
+If you want to give it a go, send me a PR! :-)
+
 ## Performance
 
-Since loaders can be slow, and `require`'s are synchronous, a lot could still be done to make `node-webpackify` faster:
-- long-term caching based on file timestamps (like `babel-register`)
-- improving logic for early bailing
+We're transforming and loading each file on-demand, while all `require` calls are synchronous.
+Unfortunately this means any top-level `require`s will cascade down making the boot-up of your application slow.
 
-If you're using babel, I recommend adding one of these plugins to your code (you could also try experimenting with the `node_modules` code):
+The way to solve this problem is to delay the `import`s as much as possible, which could be achieved using a babel plugin (explained below).
+It's likely not all codepaths in your application will be taken,
+meaning some files can be unnecessary, and others could be transformed and loaded just-in-time for their first use.
+
+This is really important in node, because `require` is synchronous, and cannot be parallelized.
+If you `require` any file and that contains top-level `require`s or static `import`s,
+all of those files, and all of *their* dependencies will have to be resolved and transformed before any other code is executed.
+
+If you're using `babel`, I recommend adding one of these plugins to the config passed into `node-webpackify` (it might not make sense in other cases):
 - https://github.com/zertosh/babel-plugin-transform-inline-imports-commonjs
 - https://github.com/princjef/babel-plugin-lazy-require
 
-They will make your `require`'s evaluate at the first moment they're used, rather than all upfront, making the start-up times much, much better.
+They will make your `require`'s evaluate at the first moment they're used,
+rather than all upfront, making the start-up times much, much better.
 
+You could even try experimenting with transpiling the `node_modules` code with these, to get even better boot times!
+
+### Open PRs with improvements!
+ 
+Since loaders can be slow, and `require`'s are synchronous, a lot could still be done to make `node-webpackify` faster:
+- long-term caching based on file timestamps (like `babel-register`)
+- improving logic for early bailing
+- resolve-only before creating the Webpack module
+- profile, find and eliminate bottlenecks!
 
 ## Debugging
 
