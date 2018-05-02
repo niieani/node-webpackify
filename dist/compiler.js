@@ -39,7 +39,7 @@ const deasync = require('deasync');
 /**
  * @param {Configuration} wpOptions
  * @param {function(Error, function(Error, SimpleCompiler=): void): void} callback
- * @returns {function(request: string, context: string, callback: function(Error, SimpleCompiler=): void): void}
+ * @returns {function(string, string, function(Error, SimpleCompiler=): void): void}
  */
 function getSimpleCompiler(wpOptions, callback) {
     const compiler = webpack_1.default(wpOptions || {});
@@ -97,7 +97,7 @@ exports.getSimpleCompiler = getSimpleCompiler;
 const getSimpleCompilerAsyncBase = util_1.promisify(getSimpleCompiler);
 const getSimpleCompilerSyncBase = deasync(getSimpleCompiler);
 /**
- * @typedef {function(request: string, context: string): SimpleCompilerSync} GetModuleSync
+ * @typedef {function(string, string): SimpleCompilerSync} GetModuleSync
  */
 /**
  * @type {function(Configuration): GetModuleSync}
@@ -116,7 +116,7 @@ exports.getSimpleCompilerSync = (wpOptions) => {
     };
 };
 /**
- * @typedef {function(request: string, context: string): Promise<SimpleCompilerAsync>} GetModuleAsync
+ * @typedef {function(string, string): Promise<SimpleCompilerAsync>} GetModuleAsync
  */
 /**
  * @type {function(Configuration): Promise<GetModuleAsync>}

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_tests_1 = require("../util-tests");
 describe('uses a loader', () => {
+    jest.setTimeout(10000);
     it('raw-loader', async () => {
         const result = await util_tests_1.runFixture('raw');
         expect(result.failed).toBe(false);

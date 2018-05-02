@@ -15,16 +15,14 @@ const logError = debug_1.default('webpack-node:error');
 const logCompilationStart = debug_1.default('webpack-node:compile:start');
 const logCompilationEnd = debug_1.default('webpack-node:compile:end');
 const anyLogEnabled = logLoad.enabled || logResolve.enabled || logError.enabled || logCompilationStart.enabled || logCompilationEnd.enabled;
-function register(wpOptions = {}, originBlacklist, requestBlacklist, blacklistBuiltin = true, target = 'node') {
+function register(wpOptions = {}, test, blacklistBuiltin = true, target = 'node') {
     const getModule = compiler_1.getSimpleCompilerSync(Object.assign({}, wpOptions, { target }));
     module_1.default._load = function _load(request, parentModule, isMain) {
         const { filename: parentFilename = '' } = parentModule || {};
         const shouldBail = isMain
-            || (!request.startsWith('!') && path_1.extname(request) === '.json')
+            || parentFilename === ''
             || (blacklistBuiltin && module_1.default.builtinModules.some((builtIn) => request.startsWith(builtIn)))
-            || (originBlacklist && parentFilename.match(originBlacklist))
-            || (requestBlacklist && request.match(requestBlacklist))
-            || parentFilename === '';
+            || (test && !test(request, parentFilename));
         if (!shouldBail) {
             try {
                 const context = path_1.dirname(parentFilename);
