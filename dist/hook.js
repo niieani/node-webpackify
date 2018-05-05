@@ -35,9 +35,9 @@ function makeLoad(wpOptions = {}, { test, testTransform, blacklistBuiltin = true
                 const { compile, filename, needsTransforming, loaders } = getModule(request, context);
                 const prettyFilename = anyLogEnabled ? util_1.getPrettyPath(filename) : '';
                 logResolve('resolved %o', { filename: prettyFilename, needsTransforming });
-                const wantsTransforming = !testTransform
-                    || testTransform(filename, loaders, request, parentFilename);
-                if (needsTransforming && wantsTransforming) {
+                const wantsTransforming = testTransform
+                    && testTransform(filename, loaders, request, parentFilename);
+                if (wantsTransforming || needsTransforming) {
                     const cachedModule = module_util_1.getCachedModule(filename, parentModule);
                     if (cachedModule)
                         return cachedModule.exports;
