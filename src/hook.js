@@ -51,10 +51,10 @@ export function makeLoad(
         const prettyFilename = anyLogEnabled ? getPrettyPath(filename) : ''
         logResolve('resolved %o', {filename: prettyFilename, needsTransforming})
 
-        const wantsTransforming = !testTransform
-          || testTransform(filename, loaders, request, parentFilename)
+        const wantsTransforming = testTransform
+          && testTransform(filename, loaders, request, parentFilename)
 
-        if (needsTransforming && wantsTransforming) {
+        if (wantsTransforming || needsTransforming) {
           const cachedModule = getCachedModule(filename, parentModule)
           if (cachedModule) return cachedModule.exports
 
