@@ -17,13 +17,23 @@ const anyLogEnabled = logLoad.enabled || logResolve.enabled || logError.enabled 
 
 export function register(
   wpOptions = {},
-  test,
-  blacklistBuiltin = true,
-  target = 'node',
+  options = {},
+) {
+  Module._load = makeLoad(wpOptions, options)
+}
+
+export function makeLoad(
+  wpOptions = {},
+  {
+    test,
+    testTransform,
+    blacklistBuiltin = true,
+    target = 'node',
+  } = {}
 ) {
   const getModule = getSimpleCompilerSync({...wpOptions, target})
 
-  Module._load = function _load(request, parentModule, isMain) {
+  return function _load(request, parentModule, isMain) {
     const {filename: parentFilename = ''} = parentModule || {}
 
     const shouldBail = isMain
@@ -41,7 +51,10 @@ export function register(
         const prettyFilename = anyLogEnabled ? getPrettyPath(filename) : ''
         logResolve('resolved %o', {filename: prettyFilename, needsTransforming})
 
-        if (needsTransforming) {
+        const wantsTransforming = !testTransform
+          || testTransform(filename, loaders, request, parentFilename)
+
+        if (needsTransforming && wantsTransforming) {
           const cachedModule = getCachedModule(filename, parentModule)
           if (cachedModule) return cachedModule.exports
 

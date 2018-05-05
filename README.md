@@ -24,17 +24,21 @@ const webpackOptions = require('./webpack.config.js')
 require('node-webpackify')(
   // webpack options object:
   webpackOptions,
+  // node-webpackify options object (optional):
+  {
+    // (optional) function(request: string, parentPath: string): boolean
+    // can be used to limit which requests are run through the resolvers and loaders
+    // when left undefined,
+    //
+    // @param request is the string passed into: require(request)
+    // @param parentPath is the full, absolute path to the module that the request is located in
+    test: (request: string, parentPath: string): boolean => true,
 
-  // (optional) function(request: string, parentPath: string): boolean
-  // can be used to limit which requests are run through the resolvers and loaders
-  // when left undefined, 
-  // 
-  // @param request is the string passed into: require(request)
-  // @param parentPath is the full, absolute path to the module that the request is located in
-  test,
+    testTransform: (filename: string, loaders: Array<Loader>, request: string, parentFilename: string): boolean => true,
 
-  // (optional) override webpack's target (default = 'node'), useful for Electron
-  target,
+    // (optional) override webpack's target (default = 'node'), useful for Electron
+    target,
+  }
 )
 ```
 
@@ -43,7 +47,7 @@ I'd recommend creating a `register-webpack.js` file with similar contents to the
 Then, you can simply run your code by executing:
 
 ```bash
-node -r ./register-webpack src/entry 
+node -r ./register-webpack src/entry
 ```
 
 ### Output code must be valid NodeJS code
@@ -57,7 +61,7 @@ If you use dynamic `import()`s, you could add a babel plugin to transpile them i
 
 ## Why?
 
-- NodeJS-based testing without mocking non-JS files, 
+- NodeJS-based testing without mocking non-JS files,
   e.g. running `jest` or `mocha` under Electron (which is Node + Chromium):
     - no build/rebuild step necessary
     - native watch mode
@@ -100,7 +104,7 @@ rather than all upfront, making the start-up times much, much better.
 You could even try experimenting with transpiling the `node_modules` code with these, to get even better boot times!
 
 ### Open PRs with improvements!
- 
+
 Since loaders can be slow, and `require`'s are synchronous, a lot could still be done to make `node-webpackify` faster:
 - long-term caching based on file timestamps (like `babel-register`)
 - improving logic for early bailing
@@ -112,7 +116,7 @@ Since loaders can be slow, and `require`'s are synchronous, a lot could still be
 Lunch your app with a `DEBUG=node-webpackify:*` environment variable, e.g.:
 
 ```bash
-DEBUG=node-webpackify:* node -r ./register-webpack src/entry 
+DEBUG=node-webpackify:* node -r ./register-webpack src/entry
 ```
 
 ## Using the compiler directly
