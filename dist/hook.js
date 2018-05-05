@@ -15,9 +15,13 @@ const logError = debug_1.default('webpack-node:error');
 const logCompilationStart = debug_1.default('webpack-node:compile:start');
 const logCompilationEnd = debug_1.default('webpack-node:compile:end');
 const anyLogEnabled = logLoad.enabled || logResolve.enabled || logError.enabled || logCompilationStart.enabled || logCompilationEnd.enabled;
-function register(wpOptions = {}, test, blacklistBuiltin = true, target = 'node') {
+function register(wpOptions = {}, options = {}) {
+    module_1.default._load = makeLoad(wpOptions, options);
+}
+exports.register = register;
+function makeLoad(wpOptions = {}, { test, testTransform, blacklistBuiltin = true, target = 'node', } = {}) {
     const getModule = compiler_1.getSimpleCompilerSync(Object.assign({}, wpOptions, { target }));
-    module_1.default._load = function _load(request, parentModule, isMain) {
+    return function _load(request, parentModule, isMain) {
         const { filename: parentFilename = '' } = parentModule || {};
         const shouldBail = isMain
             || parentFilename === ''
@@ -31,7 +35,9 @@ function register(wpOptions = {}, test, blacklistBuiltin = true, target = 'node'
                 const { compile, filename, needsTransforming, loaders } = getModule(request, context);
                 const prettyFilename = anyLogEnabled ? util_1.getPrettyPath(filename) : '';
                 logResolve('resolved %o', { filename: prettyFilename, needsTransforming });
-                if (needsTransforming) {
+                const wantsTransforming = !testTransform
+                    || testTransform(filename, loaders, request, parentFilename);
+                if (needsTransforming && wantsTransforming) {
                     const cachedModule = module_util_1.getCachedModule(filename, parentModule);
                     if (cachedModule)
                         return cachedModule.exports;
@@ -67,5 +73,5 @@ function register(wpOptions = {}, test, blacklistBuiltin = true, target = 'node'
         return load(request, parentModule, isMain);
     };
 }
-exports.register = register;
+exports.makeLoad = makeLoad;
 //# sourceMappingURL=hook.js.map
