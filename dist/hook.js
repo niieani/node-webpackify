@@ -36,27 +36,35 @@ function makeLoad(wpOptions = {}, { test, testTransform, blacklistBuiltin = true
                 const prettyFilename = anyLogEnabled ? util_1.getPrettyPath(filename) : '';
                 logResolve('resolved %o', { filename: prettyFilename, needsTransforming });
                 const wantsTransforming = testTransform
-                    && testTransform(filename, loaders, request, parentFilename);
+                    && testTransform(filename, loaders, request, parentFilename, needsTransforming);
                 if (wantsTransforming || needsTransforming) {
                     const cachedModule = module_util_1.getCachedModule(filename, parentModule);
                     if (cachedModule)
                         return cachedModule.exports;
+                    logCompilationStart('compiling %s', prettyFilename);
+                    let compiled = '';
                     try {
-                        logCompilationStart('compiling %s', prettyFilename);
-                        const compiled = compile();
-                        if (logCompilationEnd.enabled) {
-                            logCompilationEnd('compiled %O', {
-                                filename: prettyFilename,
-                                loaders: loaders.map(({ loader }) => util_1.getPrettyPath(loader)),
-                            });
-                        }
-                        const newModule = module_util_1.makeModule(filename, compiled, parentModule);
-                        return newModule.exports;
+                        compiled = compile();
                     }
                     catch (error) {
                         logError('error transforming %o', { filename: prettyFilename, request });
                         console.error(error);
                         return {};
+                    }
+                    if (logCompilationEnd.enabled) {
+                        logCompilationEnd('compiled %O', {
+                            filename: prettyFilename,
+                            loaders: loaders.map(({ loader }) => util_1.getPrettyPath(loader)),
+                        });
+                    }
+                    try {
+                        const newModule = module_util_1.makeModule(filename, compiled, parentModule);
+                        return newModule.exports;
+                    }
+                    catch (error) {
+                        logError('error executing %o', { filename: prettyFilename, request });
+                        console.error(error);
+                        throw error;
                     }
                 }
                 else {
