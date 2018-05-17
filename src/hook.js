@@ -52,27 +52,35 @@ export function makeLoad(
         logResolve('resolved %o', {filename: prettyFilename, needsTransforming})
 
         const wantsTransforming = testTransform
-          && testTransform(filename, loaders, request, parentFilename)
+          && testTransform(filename, loaders, request, parentFilename, needsTransforming)
 
         if (wantsTransforming || needsTransforming) {
           const cachedModule = getCachedModule(filename, parentModule)
           if (cachedModule) return cachedModule.exports
 
+          logCompilationStart('compiling %s', prettyFilename)
+
+          let compiled = ''
           try {
-            logCompilationStart('compiling %s', prettyFilename)
-            const compiled = compile()
-            if (logCompilationEnd.enabled) {
-              logCompilationEnd('compiled %O', {
-                filename: prettyFilename,
-                loaders: loaders.map(({loader}) => getPrettyPath(loader)),
-              })
-            }
-            const newModule = makeModule(filename, compiled, parentModule)
-            return newModule.exports
+            compiled = compile()
           } catch (error) {
             logError('error transforming %o', {filename: prettyFilename, request})
             console.error(error)
             return {}
+          }
+          if (logCompilationEnd.enabled) {
+            logCompilationEnd('compiled %O', {
+              filename: prettyFilename,
+              loaders: loaders.map(({loader}) => getPrettyPath(loader)),
+            })
+          }
+          try {
+            const newModule = makeModule(filename, compiled, parentModule)
+            return newModule.exports
+          } catch (error) {
+            logError('error executing %o', {filename: prettyFilename, request})
+            console.error(error)
+            throw error
           }
         } else {
           // we bailed, but we might already have resolved the filename - let's use it:

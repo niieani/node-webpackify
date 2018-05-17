@@ -79,19 +79,20 @@ export function getSimpleCompiler(wpOptions, callback) {
 
           const resourceAndQuery = module.request != null
             ? buildFilename(module.request)
-            : undefined
+            : []
 
           const filename = resourceAndQuery && resourceAndQuery.join('?')
+          const loaders = module.loaders || []
 
           callback(null, {
             compile,
             module,
             request: module.request,
-            loaders: module.loaders,
+            loaders,
             resource: module.resource,
             filename,
             resourceAndQuery,
-            needsTransforming: resourceAndQuery.length > 1,
+            needsTransforming: resourceAndQuery.length > 1 || loaders.length > 1,
           })
         })
       })
