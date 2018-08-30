@@ -95,8 +95,8 @@ function getSimpleCompiler(wpOptions, callback) {
     });
 }
 exports.getSimpleCompiler = getSimpleCompiler;
-const getSimpleCompilerAsyncBase = util_1.promisify(getSimpleCompiler);
-const getSimpleCompilerSyncBase = deasync(getSimpleCompiler);
+const getSimpleCompilerAsyncBase = util_1.promisify(exports.getSimpleCompiler);
+const getSimpleCompilerSyncBase = deasync(exports.getSimpleCompiler);
 /**
  * @typedef {function(string, string): SimpleCompilerSync} GetModuleSync
  */
