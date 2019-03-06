@@ -49,6 +49,8 @@ function makeLoad(wpOptions = {}, { test, testTransform, blacklistBuiltin = true
                     catch (error) {
                         logError('error transforming %o', { filename: prettyFilename, request });
                         console.error(error);
+                        // TODO temporary fallback
+                        return load(request, parentModule, isMain);
                         return {};
                     }
                     if (logCompilationEnd.enabled) {

@@ -1,7 +1,7 @@
 import webpack from 'webpack/lib/webpack'
 import fs from 'fs'
-import SingleEntryDependency from 'webpack/lib/dependencies/SingleEntryDependency'
-import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin'
+import EntryDependency from 'webpack/lib/dependencies/EntryDependency'
+import EntryPlugin from 'webpack/lib/EntryPlugin'
 import {promisify} from 'util'
 import {buildFilename} from './util-webpack'
 const deasync = require('deasync')
@@ -54,7 +54,7 @@ export function getSimpleCompiler(wpOptions, callback) {
 
       compiler.hooks.compile.call(params)
       const compilation = compiler.newCompilation(params)
-      const moduleFactory = compilation.dependencyFactories.get(SingleEntryDependency)
+      const moduleFactory = compilation.dependencyFactories.get(EntryDependency)
       const {options, resolverFactory} = compiler
 
       // we never need to parse:
@@ -64,8 +64,8 @@ export function getSimpleCompiler(wpOptions, callback) {
         moduleFactory.create({
           context,
           contextInfo: {issuer: '', compiler: 'webpack-node'},
-          dependencies: [SingleEntryPlugin.createDependency(request, 'main')]
-        }, (err, module) => {
+          dependencies: [EntryPlugin.createDependency(request, 'main')]
+        }, (err, {module, fileDependencies, missingDependencies, contextDependencies}) => {
           if (err) return callback(err)
 
           const resolver = resolverFactory.get('normal', module.resolveOptions)

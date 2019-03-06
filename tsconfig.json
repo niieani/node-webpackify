@@ -6,6 +6,7 @@
     "lib": ["esnext"],                        /* Specify library files to be included in the compilation:  */
     "allowJs": true,                          /* Allow javascript files to be compiled. */
     "checkJs": false,                         /* Report errors in .js files. */
+    "maxNodeModuleJsDepth": 5,
     // "jsx": "react",                        /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     // "jsxFactory": "console.log",
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */

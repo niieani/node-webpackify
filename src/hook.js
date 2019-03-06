@@ -66,6 +66,8 @@ export function makeLoad(
           } catch (error) {
             logError('error transforming %o', {filename: prettyFilename, request})
             console.error(error)
+            // TODO temporary fallback
+            return load(request, parentModule, isMain)
             return {}
           }
           if (logCompilationEnd.enabled) {

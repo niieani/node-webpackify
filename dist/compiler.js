@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const webpack_1 = tslib_1.__importDefault(require("webpack/lib/webpack"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
-const SingleEntryDependency_1 = tslib_1.__importDefault(require("webpack/lib/dependencies/SingleEntryDependency"));
-const SingleEntryPlugin_1 = tslib_1.__importDefault(require("webpack/lib/SingleEntryPlugin"));
+const EntryDependency_1 = tslib_1.__importDefault(require("webpack/lib/dependencies/EntryDependency"));
+const EntryPlugin_1 = tslib_1.__importDefault(require("webpack/lib/EntryPlugin"));
 const util_1 = require("util");
 const util_webpack_1 = require("./util-webpack");
 const deasync = require('deasync');
@@ -52,7 +52,7 @@ function getSimpleCompiler(wpOptions, callback) {
                 return callback(err);
             compiler.hooks.compile.call(params);
             const compilation = compiler.newCompilation(params);
-            const moduleFactory = compilation.dependencyFactories.get(SingleEntryDependency_1.default);
+            const moduleFactory = compilation.dependencyFactories.get(EntryDependency_1.default);
             const { options, resolverFactory } = compiler;
             // we never need to parse:
             options.module.noParse = '';
@@ -60,8 +60,8 @@ function getSimpleCompiler(wpOptions, callback) {
                 moduleFactory.create({
                     context,
                     contextInfo: { issuer: '', compiler: 'webpack-node' },
-                    dependencies: [SingleEntryPlugin_1.default.createDependency(request, 'main')]
-                }, (err, module) => {
+                    dependencies: [EntryPlugin_1.default.createDependency(request, 'main')]
+                }, (err, { module, fileDependencies, missingDependencies, contextDependencies }) => {
                     if (err)
                         return callback(err);
                     const resolver = resolverFactory.get('normal', module.resolveOptions);
@@ -95,8 +95,8 @@ function getSimpleCompiler(wpOptions, callback) {
     });
 }
 exports.getSimpleCompiler = getSimpleCompiler;
-const getSimpleCompilerAsyncBase = util_1.promisify(exports.getSimpleCompiler);
-const getSimpleCompilerSyncBase = deasync(exports.getSimpleCompiler);
+const getSimpleCompilerAsyncBase = util_1.promisify(getSimpleCompiler);
+const getSimpleCompilerSyncBase = deasync(getSimpleCompiler);
 /**
  * @typedef {function(string, string): SimpleCompilerSync} GetModuleSync
  */
